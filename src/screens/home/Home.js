@@ -53,7 +53,7 @@ import { formGroupClasses } from '@mui/material';
     }
     }
 
-function Home() {
+function Home(props) {
     
      
     const [upcoming,setUpcoming]=useState([]);
@@ -181,7 +181,7 @@ useEffect (()=>{
 
     function movieClickHandler(id) {
            console.log(id);
-        this.props.history.push('movie/' + id);
+        props.history.push('movie/' + id);
     }
 
    function  filterApplyHandler ()  {
@@ -373,7 +373,7 @@ console.log(releaseDateStart1)
                                     >
                                         {Object.entries(genresList).map((genre) => (
                                             <MenuItem key={genre[1].id} value={genre[1].name}>
-                                                <Checkbox checked={genres1.indexOf(genre.name) > -1} />
+                                                <Checkbox checked={genres1.indexOf(genre[1].name) > -1} />
                                                 <ListItemText primary={genre[1].name} />
                                             </MenuItem>
                                         ))}
@@ -391,7 +391,7 @@ console.log(releaseDateStart1)
                                     >
                                         {Object.entries(artistList).map(artist => (
                                             <MenuItem key={artist[1].id} value={artist[1].first_name }>
-                                                <Checkbox checked={artists.indexOf(artist[1].first_name ) > -1} />
+                                                <Checkbox checked={artists1.indexOf(artist[1].first_name ) > -1} />
                                                 <ListItemText primary={artist[1].first_name } />
                                             </MenuItem>
                                         ))}
