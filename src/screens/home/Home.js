@@ -1,4 +1,4 @@
-import React,{Component} from 'react';
+import React,{Component, useEffect, useState} from 'react';
 import Header from '../../common/header/Header';
 import  './Home.css';
 import { ImageList as GridList} from '@material-ui/core';
@@ -53,61 +53,70 @@ import { formGroupClasses } from '@mui/material';
     }
     }
 
-class Home extends Component{
-    constructor() {
-        super();
-    this.state={
-       upcoming :[]  ,
-       released:[],
-       genresList:[],
-       artistList:[],
-       genres: [],
-       artists: [],
-       movieName:"",
-       releaseDateStart: "",
-       releaseDateEnd: ""
+function Home() {
+    
+     
+    const [upcoming,setUpcoming]=useState([]);
+    const [released,setRelease]=useState([]);
+    const [genresList,setgenresList]=useState([]);
+    const [genres1,setgenres]=useState([]);
+    const [artists1,setartists]=useState([]);
+    const [movieName,setmovieName]=useState("");
+    const [releaseDateEnd,setreleasedDateEnd]=useState("");
+    const [releaseDateStart,setreleasedDateStart]=useState("as");
+    const [artistList,setartistList]=useState([])
+    
+   
+
+useEffect (()=>{
     
 
-    }
-   
-}
-componentDidMount() {
 
 
+  console.log("use");
+  const copyofgenres=[];
    Object.entries(genres).map(item=>{
-      let genre1={
+       console.log(item[1])
+      let genre2={
          id:"",name:""
        }
-       const copyofgenres=this.state.genresList;
-   
-        genre1.id=item[1].id;
-    genre1.name=item[1].name;
-    // 
-        copyofgenres.push({...genre1});
-        this.setState({...this.state,genresList:copyofgenres});
+     
+   console.log(typeof copyofgenres)
+        genre2.id=item[1].id;
+    genre2.name=item[1].name;
+
+        copyofgenres.push({...genre2});
+        
+        console.log(typeof copyofgenres)
      
    })
+   setgenresList({...copyofgenres});
+   const copyofartists=[];
    Object.entries(artists).map(item=>{
+       
     let artists1={
        id:"",first_name:"",last_name:""
      }
-     const copyofartists=this.state.artistList;
- //
+     
+ console.log(copyofartists)
       artists1.id=item[1].id;
   artists1.first_name =item[1].first_name;
   artists1.last_name =item[1].first_name;
  
       copyofartists.push({...artists1});
-      this.setState({...this.state,artistsList:copyofartists});
+      setartistList({...copyofartists});
+      console.log(artistList)
    
  })
+ 
+ const copyofState1=[]
+ const copyofState2=[];
 
           Object.entries(moviesData).map(item => {
+              console.log(item[1])
             let movieDetail={id:"",poster_url:"",title:"" ,releasedDate:"",art:"",gen:[]}
 
       
-           const copyofState1=this.state.upcoming;
-           const copyofState2=this.state.released;
           movieDetail.poster_url=item[1].poster_url
           movieDetail.title=item[1].title;
           let arr=item[1].release_date.split("T", 1);
@@ -128,79 +137,94 @@ componentDidMount() {
            copyofState1.push({...movieDetail});
            copyofState2.push({...movieDetail});
          
-            this.setState({...this.state,released:copyofState2,upcoming:copyofState1});
-          
-        
             
 
           })
+          setUpcoming({...copyofState1});
+        
+        
+           setRelease({...copyofState2});
+        
+          
+          console.log(typeof genresList);
 
     
-    }
-    movieNameChangeHandler = event => {
-       this.setState({ movieName: event.target.value });
+    },[]
+)
+    function movieNameChangeHandler (event) {
+       setmovieName( event.target.value );
+       console.log(movieName);
        
     }
 
-    genreSelectHandler = event => {
-      this.setState({ ...this.state,genres: event.target.value });
+    function genreSelectHandler(event) {
+    setgenres(event.target.value );
+    console.log(genres1);
     }
 
-    artistSelectHandler = event => {
-       this.setState({ ...this.state,artists: event.target.value });
+    function artistSelectHandler(event) {
+       setartists(event.target.value );
     }
 
-    releaseDateStartHandler = event => {
-       this.setState({ ...this.state,releaseDateStart: event.target.value });
+    function releaseDateStartHandler(event) {
+
+       setreleasedDateStart({...event.target.value} );
+       console.log(releaseDateStart)
        
 
     }
 
-    releaseDateEndHandler = event => {
-        this.setState({ ...this.state,releaseDateEnd: event.target.value });
+    function releaseDateEndHandler (event) {
+        setreleasedDateEnd({ ...event.target.value });
         
     }
 
-    movieClickHandler = (id) => {
+    function movieClickHandler(id) {
            console.log(id);
         this.props.history.push('movie/' + id);
     }
 
-    filterApplyHandler = () => {
+   function  filterApplyHandler ()  {
 //debugger;
 
-        this.setState({...this.state,released:[]}); 
+    console.log(releaseDateStart)
+    console.log(typeof releaseDateStart)
+    
       //  this.componentDidMount();
        // console.log(this.state);
         var rel=[];
     console.log(rel);
 
-       
-          if (this.state.movieName !== "") {
+       console.log(genres1);
+          if (movieName !== "") {
               
-              this.state.upcoming.map((details)=>{
-                  if(this.state.movieName==details.title){
+              Object.entries(upcoming).map((details)=>{
+                  if(movieName==details[1].title){
                // console.log(this.state.movieName);
-                  //console.log(details.title);
+                  console.log(details[1].title);
                  
-                     rel.push({...details});
+                     rel.push({...details[1]});
+                     console.log(rel)
                   }
               })
               
            ;
            
       }
-         if (this.state.genres.length > 0) {
-            this.state.genres.map((item)=>{
+       
+         if (genres1.length > 0) {
+             console.log("ingeners")
+            genres1.map((item)=>{
                // console.log("artlist"+item);
-               this.state.upcoming.map((details)=>{
+
+               Object.entries(upcoming).map((details)=>{
                // console.log("movlist"+details.);
            
-                if(item===details.gen[0] || item===details.gen[1]){
+                if(item===details[1].gen[0] || item===details[1].gen[1]){
                    // console.log(item);
     
-                     console.log(details.art);
-                     rel.push({...details});
+                     console.log(details[1].art);
+                     rel.push({...details[1]});
                     // console.log(rel);
                     
                 }
@@ -209,18 +233,18 @@ componentDidMount() {
             })
          }
         
-         if (this.state.artists.length > 0) {
+         if (artists1.length > 0) {
            
-            this.state.artists.map((item)=>{
+            artists1.map((item)=>{
             console.log("artlist"+item);
-           this.state.upcoming.map((details)=>{
-            console.log("movlist"+details.art);
+           Object.entries(upcoming).map((details)=>{
+            console.log("movlist"+details[1].art);
          
-            if(item===details.art){
+            if(item===details[1].art){
               //  console.log(item);
 
-                 console.log(details.art);
-                 rel.push({...details});
+                 console.log(details[1].art);
+                 rel.push({...details[1]});
                //  console.log(rel);
                 
             }
@@ -233,11 +257,19 @@ componentDidMount() {
          }
          
 
-         if (this.state.releaseDateStart !== "") {
-            this.state.upcoming.map((details)=>{
-              let dateofmovie=new Date(details.releasedDate);
+         if (releaseDateStart !== "") {
+             console.log(typeof releaseDateStart)
+             let releaseDateStart1=""
+            Object.entries(releaseDateStart).map((det)=>{
+                console.log(det)
+               releaseDateStart1+=det[1];
+            })
+
+console.log(releaseDateStart1)
+            Object.entries(upcoming).map((details)=>{
+              let dateofmovie=new Date(details[1].releasedDate);
               //  console.log("moviedate "+dateofmovie);
-                let dateSelected= new Date(this.state.releaseDateStart);
+                let dateSelected= new Date(releaseDateStart1);
             
 
                 if(dateSelected.getTime()<=dateofmovie.getTime()){
@@ -245,7 +277,7 @@ componentDidMount() {
         
             
               
-                   rel.push({...details});
+                   rel.push({...details[1]});
                    
     
                 }
@@ -254,11 +286,16 @@ componentDidMount() {
             
 
          }
-       if (this.state.releaseDateEnd !== "") {
-        this.state.upcoming.map((details)=>{
-            let dateofmovie=new Date(details.releasedDate);
+       if (releaseDateEnd !== "") {
+        let releaseDateEnd1=""
+        Object.entries(releaseDateEnd).map((det)=>{
+            console.log(det)
+           releaseDateEnd1+=det[1];
+        })
+        Object.entries(upcoming).map((details)=>{
+            let dateofmovie=new Date(details[1].releasedDate);
            // console.log("moviedate "+dateofmovie);
-            let dateSelected= new Date(this.state.releaseDateEnd);
+            let dateSelected= new Date(releaseDateEnd1);
             
 
             if(dateSelected.getTime()>=dateofmovie.getTime()){
@@ -266,22 +303,23 @@ componentDidMount() {
     
         
         
-               rel.push({...details});
+               rel.push({...details[1]});
             
             }
         })
 
          }
 
-        this.setState({...this.state,released:rel}); 
+        setRelease(rel); 
     }
     
     
    
-    render(){
+    
     //    console.log("render");
     
-        return (<div>
+        return (
+        <div>
        <Header></Header>
         <div style={style.upcomingMoviesHeading}>
                     <span>Upcoming Movies</span>
@@ -289,22 +327,22 @@ componentDidMount() {
         
         
         <GridList cols={6} style={style.gridListUpcomingMovies} >
-                    {this.state.upcoming.map(movie => (
-                        <GridListTile key={"upcoming" + movie.id}>
-                            <img src={movie.poster_url} className="movie-poster" alt={movie.title} />
-                            <GridListTileBar title={movie.title} />
+        {Object.entries(upcoming).map(movie => (
+                        <GridListTile key={"upcoming" + movie[1].id}>
+                            <img src={movie[1].poster_url} className="movie-poster" alt={movie[1].title} />
+                            <GridListTileBar title={movie[1].title} />
                         </GridListTile>
                     ))}
                 </GridList>
                 <div className="flex-container">
                     <div className="left">
                         <GridList rowHeight={350} cols={4} style={style.gridListMain}>
-                            {this.state.released.map(movie => (
-                                <GridListTile onClick={() => this.movieClickHandler(movie.id)}  className="released-movie-grid-item"  key={movie.id}>
-                                    <img src={movie.poster_url} className="movie-poster" alt={movie.title} />
+                            {Object.entries(released).map(movie => (
+                                <GridListTile onClick={() => movieClickHandler(movie[1].id)}  className="released-movie-grid-item"  key={movie[1].id}>
+                                    <img src={movie[1].poster_url} className="movie-poster" alt={movie[1].title} />
                                     <GridListTileBar
-                                        title={movie.title}
-                                        subtitle={<span>Release Date: {new Date(movie.releasedDate).toDateString()}</span>}
+                                        title={movie[1].title}
+                                        subtitle={<span>Release Date: {new Date(movie[1].releasedDate).toDateString()}</span>}
                                     />
                                 </GridListTile>
                             ))}
@@ -321,7 +359,7 @@ componentDidMount() {
 
                                 <FormControl style={style.formControl}>
                                     <InputLabel htmlFor="movieName">Movie Name</InputLabel>
-                                    <Input id="movieName" onChange={this.movieNameChangeHandler} />
+                                    <Input id="movieName" onChange={movieNameChangeHandler} />
                                 </FormControl>
 
                                 <FormControl style={style.formControl}>
@@ -330,13 +368,13 @@ componentDidMount() {
                                         multiple
                                         input={<Input id="select-multiple-checkbox-genre" />}
                                         renderValue={selected => selected.join(',')}
-                                        value={this.state.genres}
-                                        onChange={this.genreSelectHandler}
+                                        value={genres1}
+                                        onChange={genreSelectHandler}
                                     >
-                                        {this.state.genresList.map((genre) => (
-                                            <MenuItem key={genre.id} value={genre.name}>
-                                                <Checkbox checked={this.state.genres.indexOf(genre.name) > -1} />
-                                                <ListItemText primary={genre.name} />
+                                        {Object.entries(genresList).map((genre) => (
+                                            <MenuItem key={genre[1].id} value={genre[1].name}>
+                                                <Checkbox checked={genres1.indexOf(genre.name) > -1} />
+                                                <ListItemText primary={genre[1].name} />
                                             </MenuItem>
                                         ))}
                                     </Select>
@@ -348,13 +386,13 @@ componentDidMount() {
                                         multiple
                                         input={<Input id="select-multiple-checkbox" />}
                                         renderValue={selected => selected.join(',')}
-                                        value={this.state.artists}
-                                        onChange={this.artistSelectHandler}
+                                        value={artists1}
+                                        onChange={artistSelectHandler}
                                     >
-                                        {this.state.artistList.map(artist => (
-                                            <MenuItem key={artist.id} value={artist.first_name }>
-                                                <Checkbox checked={this.state.artists.indexOf(artist.first_name ) > -1} />
-                                                <ListItemText primary={artist.first_name } />
+                                        {Object.entries(artistList).map(artist => (
+                                            <MenuItem key={artist[1].id} value={artist[1].first_name }>
+                                                <Checkbox checked={artists.indexOf(artist[1].first_name ) > -1} />
+                                                <ListItemText primary={artist[1].first_name } />
                                             </MenuItem>
                                         ))}
                                     </Select>
@@ -367,7 +405,7 @@ componentDidMount() {
                                         type="date"
                                         defaultValue=""
                                         InputLabelProps={{ shrink: true }}
-                                        onChange={this.releaseDateStartHandler}
+                                        onChange={releaseDateStartHandler}
                                     />
                                 </FormControl>
 
@@ -378,12 +416,12 @@ componentDidMount() {
                                         type="date"
                                         defaultValue=""
                                         InputLabelProps={{ shrink: true }}
-                                        onChange={this.releaseDateEndHandler}
+                                        onChange={releaseDateEndHandler}
                                     />
                                 </FormControl>
                                 <br /><br />
                                 <FormControl style={style.formControl}>
-                                    <Button onClick={() => this.filterApplyHandler()} variant="contained" color="primary">
+                                    <Button onClick={() => filterApplyHandler()} variant="contained" color="primary">
                                         APPLY
                                     </Button>
                                 </FormControl>
@@ -399,5 +437,5 @@ componentDidMount() {
         </div>);
     
     }
-}
+
 export default Home;

@@ -1,4 +1,4 @@
-import React,{ Component } from "react";
+import React,{ Component, useEffect, useState } from "react";
 import Header from '../../common/header/Header';
 import Typography from '@material-ui/core/Typography';
 import './Details.css';
@@ -14,11 +14,12 @@ import StarBorderIcon from '@mui/icons-material/StarBorder';
 import { Link } from 'react-router-dom';
 import moviesData from "../../common/moviesData";
 
-class Details extends Component {
-    constructor() {
-        super();
-        this.state = {
-            movie: {
+function Details(props)  {
+
+    
+            const id=props.match.params.id;
+            console.log(id)
+           const [movie,setMovie]= useState ( {
                 
                     id:[],
                     title:"",
@@ -34,8 +35,8 @@ class Details extends Component {
     
     
                 
-            },
-            starIcons: [{
+            });
+            const [starIcons,SetStarIcons] = useState([{
                 id: 1,
                 stateId: "star1",
                 color: "black"
@@ -60,11 +61,12 @@ class Details extends Component {
                 stateId: "star5",
                 color: "black"
             }]
-        }
-    }
+            );
+        
+         // const id="M2";
 
-    componentDidMount() {
-        const id=this.props.match.params.id;
+    useEffect(()=>{
+        
         Object.entries(moviesData).map(item =>{
           if(item[1].id==id){
               let copyMovie={
@@ -82,9 +84,12 @@ class Details extends Component {
                 }
                 copyMovie.id=item[1].id;
                 copyMovie.title=item[1].title;
-                copyMovie.genres=item[1].title;
+                console.log(item[1].genres)
+                copyMovie.genres=item[1].genres;
+                console.log(copyMovie.genres)
                 copyMovie.trailer_url=item[1].trailer_url;
                 copyMovie.releasedDate=item[1].release_date;
+                console.log(copyMovie.releasedDate);
                 copyMovie.poster_url=item[1].poster_url;
                 copyMovie.rating=item[1].critics_rating;
                 copyMovie.plot=item[1].storyline;
@@ -119,25 +124,26 @@ class Details extends Component {
                 copyMovie.artists=rel;
                // console.log(item[1].artists[0].wiki_url);
                // copyMovie.artists[0]={id="",first_name:"",last_name:"",profile_url:"",wiki_url=""}
-            console.log(copyMovie);
+           // console.log(copyMovie);
 
-              this.setState({...this.state,movie:copyMovie})
-              console.log(this.state);
+              setMovie({...copyMovie})
+             console.log(movie);
 
           }
         
          } )
         
     
-    }
+    },[]);
 
-    artistClickHandler = (url) => {
+    function artistClickHandler (url)  {
         window.location = url;
     }
 
-    starClickHandler = (id) => {
+   function starClickHandler (id)  {
+       console.log(movie.releasedDate);
         let starIconList = [];
-        for (let star of this.state.starIcons) {
+        for (let star of starIcons) {
             let starNode = star;
             if (star.id <= id) {
                 starNode.color = "yellow"
@@ -148,11 +154,12 @@ class Details extends Component {
             }
             starIconList.push(starNode);
         }
-        this.setState({ starIcons: starIconList });
+       // SetStarIcons
+        SetStarIcons(starIconList );
     }
 
-    render() {
-        let movie = this.state.movie;
+
+       // let movie = this.state.movie;
         const opts = {
             height: '300',
             width: '700',
@@ -162,7 +169,7 @@ class Details extends Component {
         }
         return (
             <div className="details">
-                <Header id={this.props.match.params.id} showBookShowButton="true" />
+                <Header id={id} showBookShowButton="true" />
                 <div className="back">
                     <Typography>
                         <Link to="/">  &#60; Back to Home</Link>
@@ -170,31 +177,31 @@ class Details extends Component {
                 </div>
                 <div className="flex-containerDetails">
                     <div className="leftDetails">
-                        <img src={this.state.movie.poster_url} alt={this.state.movie.title} />
+                        <img src={movie.poster_url} alt={movie.title} />
                     </div>
 
                     <div className="middleDetails">
                         <div>
-                            <Typography variant="headline" component="h2">{this.state.movie.title} </Typography>
+                            <Typography variant="headline" component="h2">{movie.title} </Typography>
                         </div>
                         <br />
                         <div>
                             <Typography>
-                                <span className="bold">Genres: </span> 
+                                <span className="bold">Genres:{movie.genres} </span> 
                             </Typography>
                         </div>
                         <div>
-                            <Typography><span className="bold">Duration:</span> {this.state.movie.duration} </Typography>
+                            <Typography><span className="bold">Duration:</span> {movie.duration} </Typography>
               
                         </div>
                         <div>
-                            <Typography><span className="bold">Release Date:</span> {new Date(this.state.movie.release_date).toDateString()} </Typography>
+                            <Typography><span className="bold">Release Date:</span> {new Date(movie.releasedDate).toDateString()} </Typography>
                         </div>
                         <div>
-                            <Typography><span className="bold"> Rating:</span> {this.state.movie.rating}  </Typography>
+                            <Typography><span className="bold"> Rating:</span> {movie.rating}  </Typography>
                         </div>
                         <div className="marginTop16">
-                            <Typography><span className="bold">Plot:</span> <a href={movie.wiki_url}>(Wiki Link)</a> {this.state.movie.plot} </Typography>
+                            <Typography><span className="bold">Plot:</span> <a href={movie.duration}>(Wiki Link)</a> {movie.plot} </Typography>
                         </div>
                         <div className="trailerContainer">
                             <Typography>
@@ -203,8 +210,9 @@ class Details extends Component {
                             <YouTube
                                 videoId={movie.trailer_url.split("?v=")[1]}
                                 opts={opts}
-                                onReady={this._onReady}
+                                
                             />
+                           
                         </div>
                     </div>
 
@@ -212,11 +220,11 @@ class Details extends Component {
                         <Typography>
                             <span className="bold">Rate this movie: </span>
                         </Typography>
-                        {this.state.starIcons.map(star => (
+                        {starIcons.map(star => (
                             <StarBorderIcon
                                 className={star.color}
                                 key={"star" + star.id}
-                                onClick={() => this.starClickHandler(star.id)}
+                                onClick={() => starClickHandler(star.id)}
                             />
                         ))}
 
@@ -230,7 +238,7 @@ class Details extends Component {
                                 {movie.artists != null && movie.artists.map(artist => (
                                     <GridListTile
                                         className="gridTile"
-                                        onClick={() => this.artistClickHandler(artist.wiki_url)}
+                                        onClick={() => artistClickHandler(artist.wiki_url)}
                                         key={artist.id}>
                                         <img src={artist.profile_url} alt={artist.first_name + " " + artist.last_name} />
                                         <GridListTileBar
@@ -243,8 +251,8 @@ class Details extends Component {
                     </div>
                 </div>
             </div>
-        )
+        );
     }
-}
+
 
 export default Details;
