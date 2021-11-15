@@ -66,88 +66,72 @@ function Home(props) {
     const [releaseDateStart,setreleasedDateStart]=useState("as");
     const [artistList,setartistList]=useState([])
     
-   
+ //  const baseUrl="http://localhost:8085/api/";
 
 useEffect (()=>{
     
-
-
-
-  console.log("use");
-  const copyofgenres=[];
-   Object.entries(genres).map(item=>{
-       console.log(item[1])
-      let genre2={
-         id:"",name:""
-       }
      
-   console.log(typeof copyofgenres)
-        genre2.id=item[1].id;
-    genre2.name=item[1].name;
-
-        copyofgenres.push({...genre2});
-        
-        console.log(typeof copyofgenres)
-     
-   })
-   setgenresList({...copyofgenres});
-   const copyofartists=[];
-   Object.entries(artists).map(item=>{
-       
-    let artists1={
-       id:"",first_name:"",last_name:""
-     }
-     
- console.log(copyofartists)
-      artists1.id=item[1].id;
-  artists1.first_name =item[1].first_name;
-  artists1.last_name =item[1].first_name;
- 
-      copyofartists.push({...artists1});
-      setartistList({...copyofartists});
-      console.log(artistList)
-   
- })
- 
- const copyofState1=[]
- const copyofState2=[];
-
-          Object.entries(moviesData).map(item => {
-              console.log(item[1])
-            let movieDetail={id:"",poster_url:"",title:"" ,releasedDate:"",art:"",gen:[]}
-
+    let data = null;
+    let xhr = new XMLHttpRequest();
+    let that = this;
+    xhr.addEventListener("readystatechange", function () {
       
-          movieDetail.poster_url=item[1].poster_url
-          movieDetail.title=item[1].title;
-          let arr=item[1].release_date.split("T", 1);
-          
-          movieDetail.releasedDate=arr[0];
-         // console.log(movieDetail.releasedDate)
-         // let date= new Date(movieDetail.releasedDate);
-        //  console.log(date)
-          movieDetail.art=item[1].artists[0].first_name;
-         // console.log(item);
-        // console.log(item[1].genres[0]);
-         for(var i=0; i<item[1].genres.length; i++){
-             movieDetail.gen[i]=item[1].genres[i];
+        if (this.readyState === 4) {
+    
+            setUpcoming(
+                JSON.parse(this.responseText).movies
+            );
+        }
+    });
 
-         }
-         // console.log(movieDetail);
-          movieDetail.id=item[1].id;
-           copyofState1.push({...movieDetail});
-           copyofState2.push({...movieDetail});
-         
-            
+    xhr.open("GET", props.baseUrl + "movies?status=PUBLISHED");
+    xhr.setRequestHeader("Cache-Control", "no-cache");
+    xhr.send(data);
 
-          })
-          setUpcoming({...copyofState1});
-        
-        
-           setRelease({...copyofState2});
-        
-          
-          console.log(typeof genresList);
+    // Get released movies
+    let dataReleased = null;
+    let xhrReleased = new XMLHttpRequest();
+    xhrReleased.addEventListener("readystatechange", function () {
+        if (this.readyState === 4) {
+            setRelease(
+                JSON.parse(this.responseText).movies
+            );
+        }
+    });
 
+    xhrReleased.open("GET", props.baseUrl + "movies?status=RELEASED");
+    xhrReleased.setRequestHeader("Cache-Control", "no-cache");
+    xhrReleased.send(dataReleased);
+
+    // Get filters
+    let dataGenres = null;
+    let xhrGenres = new XMLHttpRequest();
+    xhrGenres.addEventListener("readystatechange", function () {
+        if (this.readyState === 4) {
+            setgenresList(
+            JSON.parse(this.responseText).genres
+            );
+        }
+    });
+
+    xhrGenres.open("GET", props.baseUrl + "genres");
+    xhrGenres.setRequestHeader("Cache-Control", "no-cache");
+    xhrGenres.send(dataGenres);
+
+    // Get artists
+    let dataArtists = null;
+    let xhrArtists = new XMLHttpRequest();
+    xhrArtists.addEventListener("readystatechange", function () {
+        if (this.readyState === 4) {
+            setartistList(
+                 JSON.parse(this.responseText).artists
+            );
+        }
+    });
+
+    xhrArtists.open("GET",props.baseUrl + "artists");
+    xhrArtists.setRequestHeader("Cache-Control", "no-cache");
+    xhrArtists.send(dataArtists);
     
     },[]
 )
@@ -187,130 +171,38 @@ useEffect (()=>{
    function  filterApplyHandler ()  {
 //debugger;
 
-    console.log(releaseDateStart)
-    console.log(typeof releaseDateStart)
-    
+    console.log(genres1)
       //  this.componentDidMount();
        // console.log(this.state);
-        var rel=[];
-    console.log(rel);
+       let queryString = "?status=RELEASED";
+        if (movieName !== "") {
+            queryString += "&title=" + movieName;
+        }
+        if (this.state.genres.length > 0) {
+            queryString += "&genres=" + genres.toString();
+        }
+        if (artists.length > 0) {
+            queryString += "&artists=" + artists[1].toString();
+        }
+        if (releaseDateStart !== "") {
+            queryString += "&start_date=" + releaseDateStart;
+        }
+        if (releaseDateEnd !== "") {
+            queryString += "&end_date=" + releaseDateEnd;
+        }
 
-       console.log(genres1);
-          if (movieName !== "") {
-              
-              Object.entries(upcoming).map((details)=>{
-                  if(movieName==details[1].title){
-               // console.log(this.state.movieName);
-                  console.log(details[1].title);
-                 
-                     rel.push({...details[1]});
-                     console.log(rel)
-                  }
-              })
-              
-           ;
-           
-      }
-       
-         if (genres1.length > 0) {
-             console.log("ingeners")
-            genres1.map((item)=>{
-               // console.log("artlist"+item);
-
-               Object.entries(upcoming).map((details)=>{
-               // console.log("movlist"+details.);
-           
-                if(item===details[1].gen[0] || item===details[1].gen[1]){
-                   // console.log(item);
     
-                     console.log(details[1].art);
-                     rel.push({...details[1]});
-                    // console.log(rel);
-                    
-                }
-    
-               })
-            })
-         }
-        
-         if (artists1.length > 0) {
-           
-            artists1.map((item)=>{
-            console.log("artlist"+item);
-           Object.entries(upcoming).map((details)=>{
-            console.log("movlist"+details[1].art);
-         
-            if(item===details[1].art){
-              //  console.log(item);
-
-                 console.log(details[1].art);
-                 rel.push({...details[1]});
-               //  console.log(rel);
-                
+        let dataFilter = null;
+        let xhrFilter = new XMLHttpRequest();
+        xhrFilter.addEventListener("readystatechange", function () {
+            if (this.readyState === 4) {
+                setRelease(JSON.parse(this.responseText).movies);
             }
+        });
 
-           })
-        })
-        console.log(rel);
-        
-        
-         }
-         
-
-         if (releaseDateStart !== "") {
-             console.log(typeof releaseDateStart)
-             let releaseDateStart1=""
-            Object.entries(releaseDateStart).map((det)=>{
-                console.log(det)
-               releaseDateStart1+=det[1];
-            })
-
-console.log(releaseDateStart1)
-            Object.entries(upcoming).map((details)=>{
-              let dateofmovie=new Date(details[1].releasedDate);
-              //  console.log("moviedate "+dateofmovie);
-                let dateSelected= new Date(releaseDateStart1);
-            
-
-                if(dateSelected.getTime()<=dateofmovie.getTime()){
-                
-        
-            
-              
-                   rel.push({...details[1]});
-                   
-    
-                }
-            })
-    
-            
-
-         }
-       if (releaseDateEnd !== "") {
-        let releaseDateEnd1=""
-        Object.entries(releaseDateEnd).map((det)=>{
-            console.log(det)
-           releaseDateEnd1+=det[1];
-        })
-        Object.entries(upcoming).map((details)=>{
-            let dateofmovie=new Date(details[1].releasedDate);
-           // console.log("moviedate "+dateofmovie);
-            let dateSelected= new Date(releaseDateEnd1);
-            
-
-            if(dateSelected.getTime()>=dateofmovie.getTime()){
-            
-    
-        
-        
-               rel.push({...details[1]});
-            
-            }
-        })
-
-         }
-
-        setRelease(rel); 
+        xhrFilter.open("GET", props.baseUrl + "movies" + encodeURI(queryString));
+        xhrFilter.setRequestHeader("Cache-Control", "no-cache");
+        xhrFilter.send(dataFilter);
     }
     
     
@@ -373,7 +265,7 @@ console.log(releaseDateStart1)
                                     >
                                         {Object.entries(genresList).map((genre) => (
                                             <MenuItem key={genre[1].id} value={genre[1].name}>
-                                                <Checkbox checked={genres1.indexOf(genre[1].name) > -1} />
+                                                <Checkbox checked={genres1.indexOf(genre.name) > -1} />
                                                 <ListItemText primary={genre[1].name} />
                                             </MenuItem>
                                         ))}
@@ -391,7 +283,7 @@ console.log(releaseDateStart1)
                                     >
                                         {Object.entries(artistList).map(artist => (
                                             <MenuItem key={artist[1].id} value={artist[1].first_name }>
-                                                <Checkbox checked={artists1.indexOf(artist[1].first_name ) > -1} />
+                                                <Checkbox checked={artists.indexOf(artist[1].first_name ) > -1} />
                                                 <ListItemText primary={artist[1].first_name } />
                                             </MenuItem>
                                         ))}

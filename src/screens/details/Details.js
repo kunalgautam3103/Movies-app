@@ -67,71 +67,23 @@ function Details(props)  {
 
     useEffect(()=>{
         
-        Object.entries(moviesData).map(item =>{
-          if(item[1].id==id){
-              let copyMovie={
-                id:[],
-                title:"",
-                genres: [],
-                trailer_url: "",
-                artists: [],
-                releasedDate:"",
-                poster_url:"",
-                rating:"",
-                plot:"",
-                duration:"",
-                wiki_url:""
-                }
-                copyMovie.id=item[1].id;
-                copyMovie.title=item[1].title;
-                console.log(item[1].genres)
-                copyMovie.genres=item[1].genres;
-                console.log(copyMovie.genres)
-                copyMovie.trailer_url=item[1].trailer_url;
-                copyMovie.releasedDate=item[1].release_date;
-                console.log(copyMovie.releasedDate);
-                copyMovie.poster_url=item[1].poster_url;
-                copyMovie.rating=item[1].critics_rating;
-                copyMovie.plot=item[1].storyline;
-                copyMovie.wiki_url=item[1].wiki_url;
-                copyMovie.duration=item[1].duration;
-                let rel=[];
-               Object.entries(item[1].artists).map((details)=>{
-                   console.log(details[1]);
-              
-             let copyArtist={id:"",first_name:"",last_name:"",profile_url:"",wiki_url:""};
-            
-               console.log(typeof copyArtist)
-                copyArtist.id=details[1].id;
-                copyArtist.first_name=details[1].first_name;
-                copyArtist.last_name=details[1].last_name;
-               copyArtist.profile_url=details[1].profile_url;
-               copyArtist.wiki_url=details[1].wiki_url;
-               rel.push({...copyArtist});
-               console.log(rel)
-             //  this.setState({...this.state,movie:{...this.state.movie,artist:{...rel}}})
-              // console.log(this.state)
-               
-        })
-            //     copyArtist[1].id=item[1].artists[1].id;
-            //     copyArtist[1].first_name=item[1].artists[1].first_name;
-            //     copyArtist[1].last_name=item[1].artists[1].last_name;
-            //     copyArtist[1].profile_url=item[1].artists[1].profile_url;
-            //     copyArtist[1].wiki_url=item[1].artists[1].wiki_url;
-
-            
-                console.log(rel);
-                copyMovie.artists=rel;
-               // console.log(item[1].artists[0].wiki_url);
-               // copyMovie.artists[0]={id="",first_name:"",last_name:"",profile_url:"",wiki_url=""}
-           // console.log(copyMovie);
-
-              setMovie({...copyMovie})
-             console.log(movie);
-
-          }
+      //  const baseUrl="http://localhost:8085/api/";
+        let dataMovie = null;
+        let xhrMovie = new XMLHttpRequest();
+        xhrMovie.addEventListener("readystatechange", function () {
+            if (this.readyState === 4) {
         
-         } )
+                setMovie(
+                    JSON.parse(this.responseText)[0]
+                );
+            }
+        });
+
+        xhrMovie.open("GET", props.baseUrl + "movies/" + props.match.params.id);
+        xhrMovie.setRequestHeader("Cache-Control", "no-cache");
+        xhrMovie.send(dataMovie)
+
+
         
     
     },[]);
